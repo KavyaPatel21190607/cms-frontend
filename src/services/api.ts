@@ -238,11 +238,12 @@ export const statsAPI = {
   getDashboard: async () => {
     try {
       // Fetch all data in parallel
-      const [projects, blogs, testimonials, services] = await Promise.all([
+      const [projects, blogs, testimonials, services, contactMessages] = await Promise.all([
         projectsAPI.get(),
         blogsAPI.get(),
         testimonialsAPI.get(),
         servicesAPI.get(),
+        contactAPI.getMessages(),
       ]);
 
       // Process projects by year
@@ -289,6 +290,7 @@ export const statsAPI = {
           totalBlogs: blogs.data?.blogs?.length || 0,
           totalTestimonials: testimonials.data?.testimonials?.length || 0,
           totalServices: services.data?.services?.length || 0,
+          totalMessages: contactMessages.data?.messages?.length || 0,
           projectsByYear: projectsChartData,
           servicesDistribution: servicesDistribution,
           monthlyVisitors: monthlyVisitors,
