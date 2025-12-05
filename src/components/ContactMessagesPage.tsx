@@ -28,8 +28,8 @@ export function ContactMessagesPage() {
     try {
       const response = await contactAPI.getMessages();
       console.log('Contact messages response:', response);
-      if (response.success && response.data) {
-        setMessages(response.data);
+      if (response.success && response.data?.messages) {
+        setMessages(response.data.messages);
       }
     } catch (error) {
       console.error('Failed to fetch contact messages:', error);
