@@ -39,6 +39,7 @@ export function DashboardPage() {
     totalBlogs: 0,
     totalTestimonials: 0,
     totalServices: 0,
+    totalMessages: 0,
   });
   const [projectData, setProjectData] = useState<any[]>([]);
   const [skillsData, setSkillsData] = useState<any[]>([]);
@@ -50,7 +51,13 @@ export function DashboardPage() {
       try {
         const response = await statsAPI.getDashboard();
         if (response.success) {
-          setStats(response.data);
+          setStats({
+            totalProjects: response.data.totalProjects || 0,
+            totalBlogs: response.data.totalBlogs || 0,
+            totalTestimonials: response.data.totalTestimonials || 0,
+            totalServices: response.data.totalServices || 0,
+            totalMessages: response.data.totalMessages || 0,
+          });
           setProjectData(response.data.projectsByYear || []);
           setSkillsData(response.data.servicesDistribution || []);
           setVisitorData(response.data.monthlyVisitors || []);
@@ -70,8 +77,7 @@ export function DashboardPage() {
     { title: 'Total Blogs', value: stats.totalBlogs, icon: FileText, color: 'bg-purple-100 text-purple-600' },
     { title: 'Total Testimonials', value: stats.totalTestimonials, icon: MessageSquare, color: 'bg-green-100 text-green-600' },
     { title: 'Total Services', value: stats.totalServices, icon: Briefcase, color: 'bg-orange-100 text-orange-600' },
-    { title: 'Total Visitors', value: '12.5k', icon: Users, color: 'bg-pink-100 text-pink-600' },
-    { title: 'Total Messages', value: 342, icon: Mail, color: 'bg-indigo-100 text-indigo-600' },
+    { title: 'Total Messages', value: stats.totalMessages, icon: Mail, color: 'bg-indigo-100 text-indigo-600' },
   ];
 
   return (
@@ -107,39 +113,6 @@ export function DashboardPage() {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Line Chart - Monthly Visitors */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-        >
-          <h2 className="text-gray-900 mb-6">Monthly Visitors (Blog Posts)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={visitorData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#9ca3af" />
-              <YAxis stroke="#9ca3af" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="visitors"
-                stroke="#60a5fa"
-                strokeWidth={3}
-                dot={{ fill: '#60a5fa', r: 5 }}
-                activeDot={{ r: 7 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
-
         {/* Bar Chart - Projects Completed */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -201,35 +174,6 @@ export function DashboardPage() {
           </ResponsiveContainer>
         </motion.div>
       </div>
-
-      {/* Recent Activity */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 1.0 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-      >
-        <h2 className="text-gray-900 mb-6">Recent Activity</h2>
-        <div className="space-y-4">
-          {[
-            { action: 'Published new blog post', item: '"10 Tips for Better Web Design"', time: '2 hours ago' },
-            { action: 'Updated project', item: '"E-commerce Platform"', time: '5 hours ago' },
-            { action: 'Added new testimonial', item: 'From John Doe', time: '1 day ago' },
-            { action: 'Modified service', item: '"Web Development"', time: '2 days ago' },
-          ].map((activity, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-            >
-              <div>
-                <p className="text-gray-900">{activity.action}</p>
-                <p className="text-gray-600">{activity.item}</p>
-              </div>
-              <p className="text-gray-500">{activity.time}</p>
-            </div>
-          ))}
-        </div>
-      </motion.div>
     </div>
   );
 }
